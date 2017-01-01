@@ -5,6 +5,9 @@ const browserSync = require('browser-sync').create();
 const del = require('del');
 const wiredep = require('wiredep').stream;
 const runSequence = require('run-sequence');
+const path = require('path');
+const through = require('through2');
+const gutil = require('gulp-util');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -92,10 +95,41 @@ gulp.task('extras', () => {
   }).pipe(gulp.dest('dist'));
 });
 
+gulp.task('data', () => {
+  return gulp.src(['awakeners','bodies','inductions'].map(i => `app/${i}/*.txt`), {base: 'app'})
+    // build data.json containing an index of available files
+    .pipe(through.obj(function (file, enc, cb) {
+      if (this.files === undefined) {
+        this.files = [];
+      }
+      this.files.push(path.relative(path.join(file.cwd, file.base), file.path));
+      this.push(file);
+      cb();
+    }, function (cb) {
+      var result = {
+        awakeners: [],
+        bodies: [],
+        inductions: []
+      };
+      for (var file of this.files || []) {
+        var parsed = path.parse(file);
+        result[parsed.dir.toLowerCase()].push(parsed.name);
+      }
+      this.push(new gutil.File({
+        cwd: '',
+        base: '',
+        path: 'data.json',
+        contents: new Buffer(JSON.stringify(result))
+      }));
+      cb();
+    }))
+    .pipe($.if(dev, gulp.dest('.tmp'), gulp.dest('dist')));
+});
+
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
 gulp.task('serve', () => {
-  runSequence(['clean', 'wiredep'], ['htmlhint', 'styles', 'scripts', 'fonts'], () => {
+  runSequence(['clean', 'wiredep'], ['htmlhint', 'styles', 'scripts', 'fonts', 'data'], () => {
     browserSync.init({
       notify: false,
       port: 9000,
@@ -167,7 +201,7 @@ gulp.task('wiredep', () => {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
+gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras', 'data'], () => {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 

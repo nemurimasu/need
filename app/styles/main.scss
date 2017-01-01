@@ -19,7 +19,6 @@ body {
 
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
-.marketing,
 .footer {
   padding-left: 15px;
   padding-right: 15px;
@@ -59,12 +58,24 @@ body {
   }
 }
 
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-  p + h4 {
-    margin-top: 28px;
+html.draganddrop {
+  #inductions, #bodies, #awakeners, #playlist {
+    li {
+      cursor: move;
+    }
   }
+}
+
+#inductionsHeader, #bodiesHeader, #awakenersHeader {
+  user-select: none;
+  cursor: default;
+}
+
+#playlist {
+  padding: 1em 2em;
+  background: #ccc;
+  border-radius: 1em;
+  min-height: 2em;
 }
 
 /* Responsive: Portrait tablets and up */
@@ -75,7 +86,6 @@ body {
 
   /* Remove the padding we set earlier */
   .header,
-  .marketing,
   .footer {
     padding-left: 0;
     padding-right: 0;
@@ -89,5 +99,53 @@ body {
   /* Remove the bottom border on the jumbotron for visual effect */
   .jumbotron {
     border-bottom: 0;
+  }
+
+  .playlistBuilder {
+    display: flex;
+    flex-wrap: wrap;
+
+    >[class*='col-'] {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  #playlist {
+    height: 100%;
+  }
+}
+
+body.loading > .container, body.running > .container {
+  display: none;
+}
+
+body > #spiral-container {
+  display: none;
+  background: #000;
+  width: 100%;
+  height: 100%;
+}
+
+html {
+  height: 100%;
+}
+
+body.running {
+  height: 100%;
+  padding: 0;
+  #spiral-container {
+    display: block;
+  }
+  #spiral-text {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    text-align: center;
+    color: white;
+    width: 50%;
+    left: 25%;
+    text-shadow: 1px 1px 1px #000;
+    font-size: 150%;
   }
 }

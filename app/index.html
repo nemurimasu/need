@@ -17,62 +17,139 @@
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-    
+
     <!-- build:js scripts/vendor/modernizr.js -->
     <script src="/bower_components/modernizr/modernizr.js"></script>
     <!-- endbuild -->
   </head>
-  <body>
+  <body class="loading">
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    
+
     <div class="container">
       <div class="header">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
         <h3 class="text-muted">need</h3>
       </div>
 
       <div class="jumbotron">
-        <h1>'Allo, 'Allo!</h1>
-        <p class="lead">Always a pleasure scaffolding your apps.</p>
-        <p><a class="btn btn-lg btn-success" href="#">Splendid!</a></p>
+        <h1>need</h1>
+        <p class="lead">Nemu's Electronic Entrancement Device</p>
+        <p>This is a clone of the <a href="https://craniallust.blogspot.com/">Cranial Lust</a> <a href="https://craniallust.blogspot.com/p/must2-information.html">MUST/2</a> system.</p>
       </div>
 
-      <div class="row marketing">
-        <div class="col-lg-6">
-          <h4>HTML5 Boilerplate</h4>
-          <p>HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.</p>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Names</h2>
+          <div class="form-group">
+            <label for="subjectName">Subject name</label>
+            <input type="text" class="form-control" id="subjectName" placeholder="drone">
+          </div>
+          <div class="form-group">
+            <label for="ownerName">Trainer name</label>
+            <input type="text" class="form-control" id="trainerName" placeholder="Control">
+          </div>
+        </div>
+      </div>
 
-          <h4>Sass</h4>
-          <p>Sass is the most mature, stable, and powerful professional grade CSS extension language in the world.</p>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Images</h2>
+        </div>
+      </div>
 
-          <h4>Bootstrap</h4>
-          <p>Sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.</p>
+      <div class="row">
+        <div class="col-sm-6">
+          <ul id="themes">
+            <li>Not Implemented</li>
+          </ul>
+        </div>
+        <div class="col-sm-6">
+          <p>(preview)</p>
+        </div>
+      </div>
 
-          <h4>Modernizr</h4>
-          <p>Modernizr is an open-source JavaScript library that helps you build the next generation of HTML5 and CSS3-powered websites.</p>
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Spiral</h2>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <ul id="spirals">
+            <li>Not Implemented</li>
+          </ul>
+        </div>
+        <div class="col-sm-6">
+          <p>(preview)</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Playlist</h2>
+          <p>Drag script parts from the left to build a playlist on the right.</p>
+        </div>
+      </div>
+      <div class="row playlistBuilder">
+        <div class="col-sm-6">
+          <h3>Parts</h3>
+          <h4 id="inductionsHeader"><span class="expandArrow">▼</span> Inductions</h4>
+          <ul id="inductions">
+          </ul>
+          <h4 id="bodiesHeader"><span class="expandArrow">▼</span> Bodies</h4>
+          <ul id="bodies">
+          </ul>
+          <h4 id="awakenersHeader"><span class="expandArrow">▼</span> Awakeners</h4>
+          <ul id="awakeners">
+          </ul>
+        </div>
+        <div class="col-sm-6">
+          <h3>List</h3>
+          <ol id="playlist">
+          </ol>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>Miscelaneous</h2>
+          <div class="form-group">
+            <label for="textColor">Text Color</label>
+            <input type="text" class="form-control" id="textColor" value="white">
+          </div>
+          <div class="form-group">
+            <label for="messagePause">Message Pause (seconds)</label>
+            <input type="text" class="form-control" id="messagePause" value="4">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <p><a class="btn btn-lg btn-success" href="#" id="startButton">Start!</a></p>
         </div>
       </div>
 
       <div class="footer">
-        <p>♥ from the Yeoman team</p>
+        <p>♥ Nemu</p>
       </div>
     </div>
-    
+
+    <div id="spiral-container">
+      <div id="spiral-text"></div>
+    </div>
+
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <script>
+    <!--<script>
       (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
       function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
       e=o.createElement(i);r=o.getElementsByTagName(i)[0];
       e.src='https://www.google-analytics.com/analytics.js';
       r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
       ga('create','UA-XXXXX-X');ga('send','pageview');
-    </script>
+    </script>-->
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
@@ -80,7 +157,7 @@
     <script src="/bower_components/modernizr/modernizr.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
-    
+
     <!-- build:js scripts/plugins.js -->
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
@@ -95,7 +172,7 @@
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
     <!-- endbuild -->
-    
+
     <!-- build:js scripts/main.js -->
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
