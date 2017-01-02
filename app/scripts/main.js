@@ -178,10 +178,10 @@ function updateHash() {
         return;
       }
 
-      let currentImage = Math.trunc(Math.random(theme.length));
+      let currentImage = Math.trunc(Math.random() * theme.length);
       $('#image').attr({src: theme[currentImage]});
       const imageTimer = setInterval(() => {
-        let nextRand = Math.trunc(Math.random(theme.length - 1));
+        let nextRand = Math.trunc(Math.random() * (theme.length - 1));
         if (nextRand >= currentImage) {
           nextRand++;
         }
