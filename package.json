@@ -11,6 +11,7 @@
     "browser-sync": "^2.2.1",
     "browserify": "^13.1.1",
     "del": "^2.2.0",
+    "glslify": "^6.0.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.0.1",
     "gulp-babel": "^6.1.1",
@@ -55,5 +56,19 @@
         "single"
       ]
     }
+  },
+  "dependencies": {
+    "a-big-triangle": "^1.0.3",
+    "canvas-autoscale": "^2.0.0",
+    "gl-shader": "^4.2.1",
+    "gl-texture2d": "^2.1.0",
+    "glsl-hsl2rgb": "^1.1.0",
+    "raf-loop": "^1.1.3",
+    "webgl-context": "^2.2.0"
+  },
+  "browserify": {
+    "transform": [
+      "glslify"
+    ]
   }
 }

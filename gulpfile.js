@@ -160,7 +160,8 @@ gulp.task('serve', () => {
 
     gulp.watch('app/**/*.html', ['htmlhint']);
     gulp.watch('app/styles/**/*.scss', ['styles']);
-    gulp.watch('app/scripts/**/*.js', ['scripts']);
+    gulp.watch(['app/scripts/**/*.js', 'app/shaders/**/*.{vert,frag}'], ['scripts']);
+    gulp.watch(['app/awakeners/*.txt', 'app/bodies/*.txt', 'app/inductions/*.txt'], ['data']);
     gulp.watch('app/fonts/**/*', ['fonts']);
     gulp.watch('bower.json', ['wiredep', 'fonts']);
   });

@@ -1,3 +1,5 @@
+const spiral = require('./spiral');
+
 function partDragStart(e) {
   const dt = e.originalEvent.dataTransfer;
   dt.effectAllowed = 'copy';
@@ -78,6 +80,19 @@ function getValueOrPlaceholder(selector) {
   return element.value || element.placeholder;
 }
 
+function loadImage(url) {
+  return new Promise((resolve, reject) => {
+    const element = document.createElement('img');
+    element.onload = () => {
+      resolve(element);
+    };
+    element.onerror = () => {
+      reject(new Error('Unable to load spiral'));
+    };
+    element.src = url;
+  });
+}
+
 function updateHash() {
   $('body').toggleClass('running', false);
   $('body').toggleClass('loading', false);
@@ -93,7 +108,8 @@ function updateHash() {
           playlist     = JSON.parse(params.playlist),
           names        = {'0': trainer, '1': subject},
           messagePause = parseFloat(params.messagePause),
-          textColor    = params.textColor;
+          textColor    = params.textColor,
+          spiralUrl    = params.spiral;
     $('body').toggleClass('running', true);
     $('body').toggleClass('loading', true);
     const playlistPromises = playlist.map(url => $.get(url).then(d => {
@@ -107,24 +123,28 @@ function updateHash() {
     const textPromise = Promise.all(playlistPromises).then(r => {
       return r.reduce((a, b) => a.concat(b), []);
     });
-    textPromise.then(t => {
+    const spiralPromise = loadImage(spiralUrl);
+    Promise.all([textPromise, spiralPromise]).then(t => {
+      const text = t[0];
+      const spiralImage = t[1];
+      spiral($('#spiral-canvas').get(0), spiralImage);
       $('body').toggleClass('loading', false);
-      if (t.length === 0) {
+      if (text.length === 0) {
         window.location.hash = '';
         checkHash();
         return;
       }
       let line = 0;
-      $('#spiral-text').text(t[line]);
+      $('#spiral-text').text(text[line]);
       let timer = setInterval(() => {
         line++;
-        if (line >= t.length) {
+        if (line >= text.length) {
           window.location.hash = '';
           checkHash();
           clearInterval(timer);
           return;
         }
-        $('#spiral-text').text(t[line]);
+        $('#spiral-text').text(text[line]);
       }, messagePause * 1000.0);
     });
   } else {
@@ -137,8 +157,9 @@ $('#startButton').click(e => {
   window.location.hash = '#run?' +
     `subject=${encodeURIComponent(getValueOrPlaceholder('#subjectName'))}&` +
     `trainer=${encodeURIComponent(getValueOrPlaceholder('#trainerName'))}&` +
-    `textColor=${encodeURIComponent(getValueOrPlaceholder('#textColor'))}&` +
-    `messagePause=${encodeURIComponent(getValueOrPlaceholder('#messagePause'))}&` +
+    `spiral=${encodeURIComponent(getValueOrPlaceholder('#spiralUrl'))}&` +
+    `textColor=${encodeURIComponent($('#textColor').val())}&` +
+    `messagePause=${encodeURIComponent($('#messagePause').val())}&` +
     `playlist=${encodeURIComponent(JSON.stringify($('#playlist > li').map((_, i) => $(i).data('part-url')).get()))}`;
   if (!window.HashChangeEvent) {
     updateHash();
