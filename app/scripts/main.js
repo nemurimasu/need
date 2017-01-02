@@ -50,13 +50,18 @@ function loadData() {
       });
       $('#playlist').on('dragover', function(e) {
         const dt = e.originalEvent.dataTransfer;
-        if (dt.types.includes('application/x-need-text')) {
+        //firefox hack: https://bugzilla.mozilla.org/show_bug.cgi?id=1298243
+        console.log(dt.types.prototype);
+        var func = dt.types.includes || dt.types.contains;
+        if (func.call(dt.types, 'application/x-need-text')) {
           e.preventDefault();
           dt.dropEffect = 'copy';
         }
       }).on('drop', function (e) {
         const dt = e.originalEvent.dataTransfer;
-        if (dt.types.includes('application/x-need-text')) {
+        //firefox hack: https://bugzilla.mozilla.org/show_bug.cgi?id=1298243
+        var func = dt.types.includes || dt.types.contains;
+        if (func.call(dt.types, 'application/x-need-text')) {
           e.stopPropagation();
           const item = JSON.parse(dt.getData('application/x-need-text'));
           $('#playlist').append($('<li/>', {
