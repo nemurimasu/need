@@ -1,4 +1,8 @@
 {
+  "name": "need",
+  "homepage": "https://github.com/nemurimasu/need",
+  "license": "MIT",
+  "author": "Nemurimasu Neiro <nemurimasu@gmail.com>",
   "private": true,
   "engines": {
     "node": ">=4"
