@@ -182,7 +182,7 @@ function updateHash() {
       }, 5000.0);
 
       let line = 0;
-      $('#spiral-text').text(text[line]);
+      $('#spiral-text').css('color', textColor).text(text[line]);
       const lineTimer = setInterval(() => {
         line++;
         if (line >= text.length) {
