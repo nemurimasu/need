@@ -16,17 +16,26 @@ const parts = [
   {plural: 'awakeners', singular: 'awakener'}
 ];
 
-let dataLoaded = false;
+let data = null;
 function loadData() {
-  if (dataLoaded) {
-    return;
+  if (data) {
+    return Promise.resolve(data);
   }
-  $.getJSON('data.json')
-    .then(data => {
-      if (dataLoaded) {
+  return $.getJSON('data.json')
+    .then(d => {
+      if (data != null) {
         return;
       }
-      dataLoaded = true;
+      data = d;
+
+      $('#themes').append(Object.keys(data.themes).map(t => $('<option/>', {value: t, text: t})));
+      const selectedTheme = $('#themes').val();
+      $('#image-preview > .carousel-inner').append(data.themes[selectedTheme].map(i => $('<div/>', {class: 'item'}).append($('<img/>', {src: `themes/${encodeURIComponent(selectedTheme)}/${encodeURIComponent(i)}`}))));
+      $('#image-preview > .carousel-inner > .item').first().toggleClass('active');
+
+      $('#spirals').append(data.spirals.map(t => $('<option/>', {value: `spirals/${t}`, text: t.replace(/\.[^\.]+$/, '')})));
+      $('#spiralUrl').val($('#spirals').val());
+
       parts.forEach(section => {
         const list = $(`#${section.plural}`);
         for (const item of data[section.plural]) {
@@ -57,6 +66,7 @@ function loadData() {
           .data('part-url', item.url));
         }
       });
+      return data;
     });
 }
 
@@ -117,7 +127,8 @@ function updateHash() {
           names        = {'0': trainer, '1': subject},
           messagePause = parseFloat(params.messagePause),
           textColor    = params.textColor,
-          spiralUrl    = params.spiral;
+          spiralUrl    = params.spiral,
+          themeName    = params.theme;
     $('body').toggleClass('running', true);
     $('body').toggleClass('loading', true);
     const playlistPromises = playlist.map(url => $.get(url).then(d => {
@@ -132,16 +143,20 @@ function updateHash() {
       return r.reduce((a, b) => a.concat(b), []);
     });
     const spiralPromise = loadImage(spiralUrl);
+    const themePromise = loadData().then(() => {
+      return data.themes[themeName].map(i => `themes/${encodeURIComponent(themeName)}/${encodeURIComponent(i)}`);
+    });
     let aborted = false;
     stop = () => {
       aborted = true;
     };
-    Promise.all([textPromise, spiralPromise]).then(t => {
+    Promise.all([textPromise, spiralPromise, themePromise]).then(t => {
       if (aborted) {
         return;
       }
       const text = t[0];
       const spiralImage = t[1];
+      const theme = t[2];
 
       const spiralTimer = spiral($('#spiral-canvas').get(0), spiralImage);
       stop = () => {
@@ -154,9 +169,21 @@ function updateHash() {
         checkHash();
         return;
       }
+
+      let currentImage = Math.trunc(Math.random(theme.length));
+      $('#image').attr({src: theme[currentImage]});
+      const imageTimer = setInterval(() => {
+        let nextRand = Math.trunc(Math.random(theme.length - 1));
+        if (nextRand >= currentImage) {
+          nextRand++;
+        }
+        currentImage = nextRand;
+        $('#image').attr({src: theme[currentImage]});
+      }, 5000.0);
+
       let line = 0;
       $('#spiral-text').text(text[line]);
-      let timer = setInterval(() => {
+      const lineTimer = setInterval(() => {
         line++;
         if (line >= text.length) {
           window.location.hash = '';
@@ -167,15 +194,17 @@ function updateHash() {
       }, messagePause * 1000.0);
       stop = () => {
         spiralTimer.stop();
-        clearInterval(timer);
+        clearInterval(imageTimer);
+        clearInterval(lineTimer);
       };
     });
   } else {
-    loadData();
-    stop = () => {
-      stopSpiralPreview();
-    };
-    startSpiralPreview();
+    loadData().then(() => {
+      stop = () => {
+        stopSpiralPreview();
+      };
+      startSpiralPreview();
+    });
   }
 }
 
@@ -187,7 +216,7 @@ function startSpiralPreview() {
     if (aborted) {
       return;
     }
-    const spiralTimer = spiral($('#spiral-preview > canvas').get(0), spiralImage);
+    const spiralTimer = spiral($('#spiral-preview canvas').get(0), spiralImage);
     stopSpiralPreview = () => {
       spiralTimer.stop();
     };
@@ -200,6 +229,12 @@ $('#spiralUpdate').click(e => {
   startSpiralPreview();
 });
 
+$('#spirals').change(e => {
+  stopSpiralPreview();
+  $('#spiralUrl').val($('#spirals').val());
+  startSpiralPreview();
+});
+
 $('#startButton').click(e => {
   e.preventDefault();
   window.location.hash = '#run?' +
@@ -208,6 +243,7 @@ $('#startButton').click(e => {
     `spiral=${encodeURIComponent(getValueOrPlaceholder('#spiralUrl'))}&` +
     `textColor=${encodeURIComponent($('#textColor').val())}&` +
     `messagePause=${encodeURIComponent($('#messagePause').val())}&` +
+    `theme=${encodeURIComponent($('#themes').val())}&` +
     `playlist=${encodeURIComponent(JSON.stringify($('#playlist > li').map((_, i) => $(i).data('part-url')).get()))}`;
   if (!window.HashChangeEvent) {
     updateHash();

@@ -60,12 +60,24 @@
 
       <div class="row">
         <div class="col-sm-6">
-          <ul id="themes">
-            <li>Not Implemented</li>
-          </ul>
+          <div class="form-group">
+            <select id="themes" class="form-control">
+            </select>
+          </div>
         </div>
-        <div class="col-sm-6">
-          <p>(preview)</p>
+        <div class="col-sm-6" id="image-preview-wrapper">
+          <div class="carousel slide" id="image-preview" data-ride="carousel">
+            <div class="carousel-inner" role="listbox">
+            </div>
+            <a class="left carousel-control" href="#image-preview" role="button" data-slide="prev">
+              <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#image-preview" role="button" data-slide="next">
+              <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -77,12 +89,13 @@
 
       <div class="row">
         <div class="col-sm-6">
-          <ul id="spirals">
-            <li>List Not Implemented</li>
-          </ul>
+          <div class="form-group">
+            <select id="spirals" class="form-control">
+            </select>
+          </div>
           <div class="form-group">
             <div class="input-group">
-              <input type="text" class="form-control" id="spiralUrl" placeholder="images/spiral.webp">
+              <input type="text" class="form-control" id="spiralUrl" placeholder="spirals/spiral.webp">
               <span class="input-group-btn">
                 <button id="spiralUpdate" class="btn btn-default" type="button">Update</button>
               </span>
@@ -90,7 +103,9 @@
           </div>
         </div>
         <div class="col-sm-6" id="spiral-preview">
-          <canvas></canvas>
+          <div>
+            <canvas></canvas>
+          </div>
         </div>
       </div>
 
@@ -146,6 +161,7 @@
     </div>
 
     <div id="spiral-container">
+      <img id="image">
       <canvas id="spiral-canvas"></canvas>
       <div id="spiral-text"></div>
     </div>

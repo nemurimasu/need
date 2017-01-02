@@ -74,7 +74,7 @@ html.draganddrop {
 #playlist {
   padding: 1em 2em;
   background: #ccc;
-  border-radius: 1em;
+  border-radius: 20px;
   min-height: 2em;
 }
 
@@ -127,7 +127,14 @@ body > #spiral-container {
   height: 100%;
 }
 
-#spiral-preview > canvas {
+#image-preview-wrapper:before {
+  display: block;
+  content: "";
+  width: 100%;
+  padding-top: 56.25%;
+}
+
+#image-preview {
   position: absolute;
   left: 15px;
   right: 15px;
@@ -135,7 +142,41 @@ body > #spiral-container {
   bottom: 0;
   height: auto;
   width: auto;
-  border-radius: 1em;
+  border-radius: 20px;
+  background: gray;
+  overflow: hidden;
+  z-index: 1000;
+  > .left.carousel-control {
+    border-radius: 20px 0 0 20px;
+  }
+  > .right.carousel-control {
+    border-radius: 0 20px 20px 0;
+  }
+  > .carousel-inner {
+    height: 100%;
+    > .item {
+      height: 100%;
+      > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+#spiral-preview > div {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  width: auto;
+  > canvas {
+    border-radius: 20px;
+    background: gray;
+  }
 }
 
 #spiral-preview:before {
@@ -154,6 +195,11 @@ body.running {
   padding: 0;
   #spiral-container {
     display: block;
+  }
+  #image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
   }
   #spiral-text {
     position: absolute;

@@ -107,7 +107,8 @@ gulp.task('extras', () => {
 });
 
 gulp.task('data', () => {
-  return gulp.src(['awakeners','bodies','inductions'].map(i => `app/${i}/*.txt`), {base: 'app'})
+  return gulp.src(['awakeners','bodies','inductions'].map(i => `app/${i}/*.txt`).concat(['app/spirals/*', 'app/themes/*/*']), {base: 'app'})
+    .pipe($.if(!dev, $.if('app/spirals/**/*', $.cache($.imagemin()))))
     // build data.json containing an index of available files
     .pipe(through.obj(function (file, enc, cb) {
       if (this.files === undefined) {
@@ -120,11 +121,23 @@ gulp.task('data', () => {
       var result = {
         awakeners: [],
         bodies: [],
-        inductions: []
+        inductions: [],
+        spirals: [],
+        themes: {}
       };
       for (var file of this.files || []) {
         var parsed = path.parse(file);
-        result[parsed.dir.toLowerCase()].push(parsed.name);
+        var dir = parsed.dir;
+        if (~['awakeners', 'bodies', 'inductions'].indexOf(dir)) {
+          result[dir].push(parsed.name);
+        } else if (dir === 'spirals') {
+          result[dir].push(parsed.base);
+        } else if (path.dirname(dir) === 'themes') {
+          var themeName = path.basename(dir);
+          var theme = result.themes[themeName] || [];
+          theme.push(parsed.base);
+          result.themes[themeName] = theme;
+        }
       }
       this.push(new gutil.File({
         cwd: '',
@@ -134,7 +147,7 @@ gulp.task('data', () => {
       }));
       cb();
     }))
-    .pipe($.if(dev, gulp.dest('.tmp'), gulp.dest('dist')));
+    .pipe($.if(dev, $.if(['**/*', '!spirals/*', '!themes/*/*'], gulp.dest('.tmp')), gulp.dest('dist')));
 });
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
@@ -161,7 +174,7 @@ gulp.task('serve', () => {
     gulp.watch('app/**/*.html', ['htmlhint']);
     gulp.watch('app/styles/**/*.scss', ['styles']);
     gulp.watch(['app/scripts/**/*.js', 'app/shaders/**/*.{vert,frag}'], ['scripts']);
-    gulp.watch(['app/awakeners/*.txt', 'app/bodies/*.txt', 'app/inductions/*.txt'], ['data']);
+    gulp.watch(['app/awakeners/*.txt', 'app/bodies/*.txt', 'app/inductions/*.txt', 'app/spirals/*', 'app/themes/*/*'], ['data']);
     gulp.watch('app/fonts/**/*', ['fonts']);
     gulp.watch('bower.json', ['wiredep', 'fonts']);
   });

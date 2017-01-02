@@ -14,14 +14,11 @@ module.exports = function(canvas, image) {
 
   const texture = createTexture(gl, image);
   texture.bind();
+  texture.minFilter = texture.magFilter = gl.LINEAR;
+  texture.wrap = gl.CLAMP_TO_EDGE;
   if (validSizes.includes(image.width) && validSizes.includes(image.height)) {
     texture.generateMipmap();
     texture.minFilter = gl.LINEAR_MIPMAP_LINEAR;
-    texture.magFilter = gl.LINEAR;
-    texture.wrap = gl.CLAMP_TO_EDGE;
-  } else {
-    texture.minFilter = texture.magFilter = gl.LINEAR;
-    texture.wrap = gl.CLAMP_TO_EDGE;
   }
 
   let resize;

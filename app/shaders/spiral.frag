@@ -36,23 +36,27 @@ void main() {
   float texSin = sin(texSpin);
   float texCos = cos(texSpin);
   mat2 texMat = mat2(texCos, texSin, -texSin, texCos);
+  vec4 texColor;
 
   if (-2.0 < vPos.x && vPos.x < 0.0) {
     dist = distance(vec2(-1.0, 0.0), vPos);
     inCircle = clamp(1.0 - (1.0 - dist) * SHARPNESS, 0.0, 1.0);
     texPos = (vPos + vec2(1.0, 0.0)) * texMat;
-    color = mix(color, texture2D(texture, 0.5 * texPos + vec2(0.5, 0.5)), (1.0 - inCircle) * 0.25);
+    texColor = texture2D(texture, 0.5 * texPos + vec2(0.5, 0.5));
+    color = mix(color, vec4(texColor.rgb, 1.0), texColor.a * (1.0 - inCircle) * 0.25);
   } else if (0.0 < vPos.x && vPos.x < 2.0) {
     dist = distance(vec2(1.0, 0.0), vPos);
     inCircle = clamp(1.0 - (1.0 - dist) * SHARPNESS, 0.0, 1.0);
     texPos = (vec2(-vPos.x, vPos.y) + vec2(1.0, 0.0)) * texMat;
-    color = mix(color, texture2D(texture, 0.5 * texPos + vec2(0.5, 0.5)), (1.0 - inCircle) * 0.25);
+    texColor = texture2D(texture, 0.5 * texPos + vec2(0.5, 0.5));
+    color = mix(color, vec4(texColor.rgb, 1.0), texColor.a *(1.0 - inCircle) * 0.25);
   }
   if (-2.0 < vPos.x && vPos.x < 2.0) {
     dist = distance(vec2(0.0, 0.0), vPos);
     inCircle = clamp(1.0 - (2.0 - dist) * SHARPNESS, 0.0, 1.0);
     texPos = 0.5 * vPos * texMat;
-    color = mix(color, texture2D(texture, 0.5 * texPos + vec2(0.5, 0.5)), (1.0 - inCircle) * 0.25);
+    texColor = texture2D(texture, 0.5 * texPos + vec2(0.5, 0.5));
+    color = mix(color, vec4(texColor.rgb, 1.0), texColor.a * (1.0 - inCircle) * 0.25);
   }
 
   color = mix(color, vec4(spiral(vPos), 1.0), 0.2);
