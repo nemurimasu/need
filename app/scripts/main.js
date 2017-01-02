@@ -55,7 +55,6 @@ function loadData() {
       $('#playlist').on('dragover', function(e) {
         const dt = e.originalEvent.dataTransfer;
         //firefox hack: https://bugzilla.mozilla.org/show_bug.cgi?id=1298243
-        console.log(dt.types.prototype);
         var func = dt.types.includes || dt.types.contains;
         if (func.call(dt.types, 'application/x-need-text')) {
           e.preventDefault();
