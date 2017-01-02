@@ -6,16 +6,23 @@ const triangle      = require('a-big-triangle'),
       autoscale     = require('canvas-autoscale'),
       rafLoop       = require('raf-loop');
 
+const validSizes = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
+
 module.exports = function(canvas, image) {
   const gl = createContext({canvas});
   const shader = createShader(gl, glslify('../shaders/spiral.vert'), glslify('../shaders/spiral.frag'));
 
   const texture = createTexture(gl, image);
   texture.bind();
-  texture.generateMipmap();
-  texture.minFilter = gl.LINEAR_MIPMAP_LINEAR;
-  texture.magFilter = gl.LINEAR;
-  texture.wrap = gl.CLAMP_TO_EDGE;
+  if (validSizes.includes(image.width) && validSizes.includes(image.height)) {
+    texture.generateMipmap();
+    texture.minFilter = gl.LINEAR_MIPMAP_LINEAR;
+    texture.magFilter = gl.LINEAR;
+    texture.wrap = gl.CLAMP_TO_EDGE;
+  } else {
+    texture.minFilter = texture.magFilter = gl.LINEAR;
+    texture.wrap = gl.CLAMP_TO_EDGE;
+  }
 
   let resize;
   const startTime = Date.now();
@@ -30,7 +37,7 @@ module.exports = function(canvas, image) {
   };
   resize = autoscale(canvas, {}, render);
 
-  rafLoop(function(dt) {
+  return rafLoop(function(dt) {
     render();
   }).start();
 }

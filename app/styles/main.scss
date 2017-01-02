@@ -127,6 +127,24 @@ body > #spiral-container {
   height: 100%;
 }
 
+#spiral-preview > canvas {
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  width: auto;
+  border-radius: 1em;
+}
+
+#spiral-preview:before {
+  display: block;
+  content: "";
+  width: 100%;
+  padding-top: 56.25%;
+}
+
 html {
   height: 100%;
 }

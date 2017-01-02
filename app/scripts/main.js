@@ -89,11 +89,19 @@ function loadImage(url) {
     element.onerror = () => {
       reject(new Error('Unable to load spiral'));
     };
+    element.crossOrigin = 'Anonymous';
     element.src = url;
   });
 }
 
+let stop = () => {};
+let stopSpiralPreview = () => {};
+
 function updateHash() {
+  stop();
+  stop = () => {};
+  stopSpiralPreview = () => {};
+
   $('body').toggleClass('running', false);
   $('body').toggleClass('loading', false);
 
@@ -124,10 +132,22 @@ function updateHash() {
       return r.reduce((a, b) => a.concat(b), []);
     });
     const spiralPromise = loadImage(spiralUrl);
+    let aborted = false;
+    stop = () => {
+      aborted = true;
+    };
     Promise.all([textPromise, spiralPromise]).then(t => {
+      if (aborted) {
+        return;
+      }
       const text = t[0];
       const spiralImage = t[1];
-      spiral($('#spiral-canvas').get(0), spiralImage);
+
+      const spiralTimer = spiral($('#spiral-canvas').get(0), spiralImage);
+      stop = () => {
+        spiralTimer.stop();
+      };
+
       $('body').toggleClass('loading', false);
       if (text.length === 0) {
         window.location.hash = '';
@@ -141,16 +161,44 @@ function updateHash() {
         if (line >= text.length) {
           window.location.hash = '';
           checkHash();
-          clearInterval(timer);
           return;
         }
         $('#spiral-text').text(text[line]);
       }, messagePause * 1000.0);
+      stop = () => {
+        spiralTimer.stop();
+        clearInterval(timer);
+      };
     });
   } else {
     loadData();
+    stop = () => {
+      stopSpiralPreview();
+    };
+    startSpiralPreview();
   }
 }
+
+function startSpiralPreview() {
+  const spiralPromise = loadImage(getValueOrPlaceholder('#spiralUrl'));
+  let aborted = false;
+  stopSpiralPreview = () => { aborted = true; };
+  spiralPromise.then(spiralImage => {
+    if (aborted) {
+      return;
+    }
+    const spiralTimer = spiral($('#spiral-preview > canvas').get(0), spiralImage);
+    stopSpiralPreview = () => {
+      spiralTimer.stop();
+    };
+  });
+}
+
+$('#spiralUpdate').click(e => {
+  e.preventDefault();
+  stopSpiralPreview();
+  startSpiralPreview();
+});
 
 $('#startButton').click(e => {
   e.preventDefault();
