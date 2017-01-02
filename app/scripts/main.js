@@ -16,6 +16,12 @@ const parts = [
   {plural: 'awakeners', singular: 'awakener'}
 ];
 
+function updateThemePreview() {
+  const selectedTheme = $('#themes').val();
+  $('#image-preview > .carousel-inner').empty().append(data.themes[selectedTheme].map(i => $('<div/>', {class: 'item'}).append($('<img/>', {src: `themes/${encodeURIComponent(selectedTheme)}/${encodeURIComponent(i)}`}))));
+  $('#image-preview > .carousel-inner > .item').first().toggleClass('active');
+}
+
 let data = null;
 function loadData() {
   if (data) {
@@ -29,9 +35,7 @@ function loadData() {
       data = d;
 
       $('#themes').append(Object.keys(data.themes).map(t => $('<option/>', {value: t, text: t})));
-      const selectedTheme = $('#themes').val();
-      $('#image-preview > .carousel-inner').append(data.themes[selectedTheme].map(i => $('<div/>', {class: 'item'}).append($('<img/>', {src: `themes/${encodeURIComponent(selectedTheme)}/${encodeURIComponent(i)}`}))));
-      $('#image-preview > .carousel-inner > .item').first().toggleClass('active');
+      updateThemePreview();
 
       $('#spirals').append(data.spirals.map(t => $('<option/>', {value: `spirals/${t}`, text: t.replace(/\.[^\.]+$/, '')})));
       $('#spiralUrl').val($('#spirals').val());
@@ -239,6 +243,8 @@ $('#spirals').change(e => {
   $('#spiralUrl').val($('#spirals').val());
   startSpiralPreview();
 });
+
+$('#themes').change(updateThemePreview);
 
 $('#startButton').click(e => {
   e.preventDefault();
